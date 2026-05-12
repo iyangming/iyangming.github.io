@@ -1,7 +1,7 @@
 baseURL = 'https://iyangming.github.io/'
 languageCode = 'zh-cn'
 title = 'TokenMind'
-theme = 'ananke'
+theme = 'hugo-PaperMod'
 
 # 构建配置
 buildFuture = false
@@ -21,7 +21,7 @@ buildDrafts = false
   category = 'categories'
   tag = 'tags'
 
-# Ananke 主题配置
+# PaperMod 主题配置
 [params]
   # 网站描述（用于 SEO）
   description = 'TokenMind - AI 智能体技术分享与企业数字化实践'
@@ -35,39 +35,60 @@ buildDrafts = false
   # 自定义 CSS
   custom_css = ['/css/custom.css']
   
-  #  favicon
+  # Favicon
   # favicon = '/favicon.ico'
   
   # 版权年份
   copyrightYear = 2025
 
-# Ananke 主题 - 导航栏
-[params.navigation]
-  # 是否显示首页链接
-  home = true
-  # 是否显示分类页
-  categories = true
-  # 是否显示标签页
-  tags = true
-  # 是否显示关于页
-  about = true
+# PaperMod - 首页信息
+[params.homeInfoParams]
+  Title = "欢迎来到 TokenMind! 🎉"
+  Content = "专注于 AI 智能体技术分享与企业数字化实践的个人博客。"
 
-# Ananke 主题 - 社交链接（可选）
-# [[params.social]]
-#   name = 'github'
-#   url = 'https://github.com/iyangming'
-# [[params.social]]
-#   name = 'twitter'
-#   url = 'https://twitter.com/yourusername'
+# PaperMod - 个人资料模式（可选）
+[params.profileMode]
+  enabled = true
+  title = "TokenMind"
+  subtitle = "AI 智能体 | 企业数字化 | 技术实践"
+  imageUrl = "/images/profile.jpg"  # 需要添加头像图片
+  imageTitle = "my avatar"
+  imageWidth = 120
+  imageHeight = 120
+  buttons = [
+    { name = "博客", url = "/posts/" },
+    { name = "分类", url = "/categories/" },
+    { name = "标签", url = "/tags/" },
+    { name = "关于", url = "/about/" }
+  ]
+  # socialIcons = [
+  #   { name = "github", url = "https://github.com/iyangming" },
+  #   { name = "twitter", url = "https://twitter.com/yourusername" },
+  #   { name = "email", url = "mailto:your-email@example.com" }
+  # ]
 
-# SEO 配置
+# PaperMod - 文章目录（TOC）
+[params.toc]
+  enable = true
+  keepStatic = false
+  auto = true
+  label = "目录"
+  headingLevel = 2
+
+# PaperMod - 代码块配置
+[params.assets]
+  disableJs = false
+  disableScrollToTop = false
+  custom_js = []
+
+# PaperMod - SEO 配置
 [params.seo]
   # 是否允许搜索引擎索引
   robots = true
   # Google Analytics（可选）
   # googleAnalytics = 'G-XXXXXXXXXX'
 
-# 分日期语言配置
+# 日期格式配置
 [params.dateformat]
   published = '2006-01-02'
   lastmod = '2006-01-02'
