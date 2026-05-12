@@ -32,8 +32,8 @@ buildDrafts = false
   # 首页副标题
   # subtitle = 'AI 智能体 | 企业数字化 | 技术实践'
   
-  # 自定义 CSS（如果有）
-  # custom_css = ['/css/custom.css']
+  # 自定义 CSS
+  custom_css = ['/css/custom.css']
   
   #  favicon
   # favicon = '/favicon.ico'
@@ -49,6 +49,8 @@ buildDrafts = false
   categories = true
   # 是否显示标签页
   tags = true
+  # 是否显示关于页
+  about = true
 
 # Ananke 主题 - 社交链接（可选）
 # [[params.social]]
