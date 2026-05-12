@@ -1,0 +1,83 @@
+baseURL = 'https://iyangming.github.io/'
+languageCode = 'zh-cn'
+title = 'TokenMind'
+theme = 'ananke'
+
+# 构建配置
+buildFuture = false
+buildExpired = false
+buildDrafts = false
+
+# 永久链接配置
+[permalinks]
+  posts = '/posts/:slug/'
+
+# 分页配置
+[pagination]
+  pagerSize = 10
+
+# 分类和标签
+[taxonomies]
+  category = 'categories'
+  tag = 'tags'
+
+# Ananke 主题配置
+[params]
+  # 网站描述（用于 SEO）
+  description = 'TokenMind - AI 智能体技术分享与企业数字化实践'
+  
+  # 作者信息
+  author = 'iyangming'
+  
+  # 首页副标题
+  # subtitle = 'AI 智能体 | 企业数字化 | 技术实践'
+  
+  # 自定义 CSS（如果有）
+  # custom_css = ['/css/custom.css']
+  
+  #  favicon
+  # favicon = '/favicon.ico'
+  
+  # 版权年份
+  copyrightYear = 2025
+
+# Ananke 主题 - 导航栏
+[params.navigation]
+  # 是否显示首页链接
+  home = true
+  # 是否显示分类页
+  categories = true
+  # 是否显示标签页
+  tags = true
+
+# Ananke 主题 - 社交链接（可选）
+# [[params.social]]
+#   name = 'github'
+#   url = 'https://github.com/iyangming'
+# [[params.social]]
+#   name = 'twitter'
+#   url = 'https://twitter.com/yourusername'
+
+# SEO 配置
+[params.seo]
+  # 是否允许搜索引擎索引
+  robots = true
+  # Google Analytics（可选）
+  # googleAnalytics = 'G-XXXXXXXXXX'
+
+# 分日期语言配置
+[params.dateformat]
+  published = '2006-01-02'
+  lastmod = '2006-01-02'
+
+# 构建输出配置（用于 GitHub Pages）
+[outputs]
+  home = ['HTML', 'RSS', 'SITEMAP']
+  section = ['HTML', 'RSS']
+  taxonomy = ['HTML', 'RSS']
+
+# Sitemap 配置
+[sitemap]
+  changefreq = 'monthly'
+  priority = 0.5
+  filename = 'sitemap.xml'
