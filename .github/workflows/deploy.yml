@@ -47,17 +47,16 @@ defaults:
   run:
     shell: bash
 
+env:
+  HUGO_VERSION: 0.161.1        # Hugo 版本（与本地一致）
+  HUGO_ENV: production          # 构建环境（production/development）
+
 jobs:
   # ============================================
   # 任务 1：构建 Hugo 网站
   # ============================================
   build:
     runs-on: ubuntu-latest
-    
-    # 环境变量
-    env:
-      HUGO_VERSION: 0.161.1        # Hugo 版本（与本地一致）
-      HUGO_ENV: production           # 构建环境（production/development）
     
     steps:
       # 步骤 1：检出代码（包括子模块）
@@ -79,6 +78,8 @@ jobs:
           
           echo "Hugo 安装完成！版本信息："
           hugo version
+        env:
+          HUGO_VERSION: ${{ env.HUGO_VERSION }}
       
       # 步骤 3：安装 Dart Sass（如果使用 SCSS 样式）
       - name: 安装 Dart Sass
@@ -94,19 +95,25 @@ jobs:
       - name: 构建 Hugo 网站
         run: |
           echo "开始构建 Hugo 网站..."
+          echo "Hugo 版本："
+          hugo version
+          
+          echo "正在构建..."
           hugo \
-            --gc \                    # 清理未使用的缓存
-            --minify \               # 压缩 HTML/CSS/JS
+            --gc \
+            --minify \
             --baseURL "${{ steps.pages.outputs.base_url }}/"
           
           echo "构建完成！生成的文件："
           ls -lah public/
+          echo "文件数量："
+          find public/ -type f | wc -l
       
       # 步骤 6：上传构建产物（供部署任务使用）
       - name: 上传构建产物
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./public          # Hugo 默认输出目录
+          path: ./public
   
   # ============================================
   # 任务 2：部署到 GitHub Pages
