@@ -1,0 +1,138 @@
+# Hugo 自动构建和部署到 GitHub Pages
+# 
+# 功能说明：
+# 1. 当代码推送到 main 分支时自动触发
+# 2. 检出代码（包括主题子模块）
+# 3. 安装 Hugo 构建工具
+# 4. 构建静态网站
+# 5. 部署到 GitHub Pages
+#
+# 使用前准备：
+# 1. 在 GitHub 仓库设置中启用 Pages（Settings > Pages > Source > GitHub Actions）
+# 2. 确保 hugo.toml 中的 baseURL 配置正确
+# 3. 确保主题以子模块方式添加（git submodule add）
+
+name: Deploy Hugo Site to Pages
+
+on:
+  # 触发条件1：推送到 main 分支
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+      - '.gitignore'
+  
+  # 触发条件2：手动触发（用于测试）
+  workflow_dispatch:
+
+  # 触发条件3：定时触发（可选，例如每天凌晨 2 点重建）
+  # schedule:
+  #   - cron: '0 2 * * *'
+
+# 设置 GITHUB_TOKEN 的权限
+permissions:
+  contents: read      # 读取仓库内容
+  pages: write       # 部署到 Pages
+  id-token: write    # 验证身份
+
+# 确保只有一个部署任务运行，避免冲突
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+# 默认设置
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  # ============================================
+  # 任务 1：构建 Hugo 网站
+  # ============================================
+  build:
+    runs-on: ubuntu-latest
+    
+    # 环境变量
+    env:
+      HUGO_VERSION: 0.161.1        # Hugo 版本（与本地一致）
+      HUGO_ENV: production           # 构建环境（production/development）
+    
+    steps:
+      # 步骤 1：检出代码（包括子模块）
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive      # 递归检出子模块（主题）
+          fetch-depth: 0            # 获取完整 git 历史
+      
+      # 步骤 2：安装 Hugo CLI
+      - name: 安装 Hugo CLI
+        run: |
+          echo "正在下载 Hugo v${HUGO_VERSION}..."
+          wget -O ${{ runner.temp }}/hugo.deb \
+            https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb
+          
+          echo "正在安装 Hugo..."
+          sudo dpkg -i ${{ runner.temp }}/hugo.deb
+          
+          echo "Hugo 安装完成！版本信息："
+          hugo version
+      
+      # 步骤 3：安装 Dart Sass（如果使用 SCSS 样式）
+      - name: 安装 Dart Sass
+        run: sudo snap install dart-sass
+        continue-on-error: true  # 如果已安装则跳过
+      
+      # 步骤 4：配置 GitHub Pages
+      - name: 配置 GitHub Pages
+        id: pages
+        uses: actions/configure-pages@v5
+      
+      # 步骤 5：构建 Hugo 网站
+      - name: 构建 Hugo 网站
+        run: |
+          echo "开始构建 Hugo 网站..."
+          hugo \
+            --gc \                    # 清理未使用的缓存
+            --minify \               # 压缩 HTML/CSS/JS
+            --baseURL "${{ steps.pages.outputs.base_url }}/"
+          
+          echo "构建完成！生成的文件："
+          ls -lah public/
+      
+      # 步骤 6：上传构建产物（供部署任务使用）
+      - name: 上传构建产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public          # Hugo 默认输出目录
+  
+  # ============================================
+  # 任务 2：部署到 GitHub Pages
+  # ============================================
+  deploy:
+    # 部署环境配置
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    runs-on: ubuntu-latest
+    
+    # 依赖关系：必须先完成 build 任务
+    needs: build
+    
+    steps:
+      # 步骤 1：部署到 GitHub Pages
+      - name: 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        
+      # 步骤 2：输出部署结果
+      - name: 输出部署信息
+        run: |
+          echo "✅ 部署成功！"
+          echo "📍 网站地址: ${{ steps.deployment.outputs.page_url }}"
+          echo "📝 仓库: ${{ github.repository }}"
+          echo "🔀 分支: ${{ github.ref }}"
+          echo "📌 提交: ${{ github.sha }}"
