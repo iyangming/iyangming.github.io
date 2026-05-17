@@ -17,6 +17,9 @@ hugo --gc --minify
 
 # Create a new post (draft by default)
 hugo new posts/my-new-post.md
+
+# Restart server after creating new content (avoids Fast Render cache issues)
+rm -f .hugo_build.lock && pkill -f "hugo server" && sleep 2 && hugo server -D &
 ```
 
 ## Architecture
@@ -40,3 +43,18 @@ Posts use frontmatter with: title, date, draft, description, tags, categories, t
 ## Theme Configuration
 
 PaperMod-specific params in hugo.toml control: profile mode (homepage), TOC settings, SEO, social icons, date formats. Profile mode is currently enabled on homepage.
+
+## Troubleshooting
+
+### 新文章 404 问题
+
+**症状**：创建新文章后，本地服务器访问 404，但 `hugo list all` 能看到文章。
+
+**原因**：Hugo Fast Render Mode 缓存问题 + `.hugo_build.lock` 残留导致新文件未被扫描。
+
+**解决**：
+```bash
+rm -f .hugo_build.lock && pkill -f "hugo server" && sleep 2 && hugo server -D &
+```
+
+**预防**：每次创建新文章后重启服务器，或使用上面的命令。
